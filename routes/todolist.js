@@ -1,7 +1,7 @@
-var express = require('express');
+var express = require("express");
 var router = express.Router();
 
-const { TodoList } = require("../models");
+const { TodoList, TodoListItems } = require("../models");
 
 // Create a new to-do list
 router.post("/", async (req, res) => {
@@ -17,7 +17,13 @@ router.post("/", async (req, res) => {
 // Get all to-do lists, including associated items
 router.get("/", async (req, res) => {
   try {
-    const todolists = await TodoList.findAll(); // how can we include the ITEMS associated with the baskets in this response?
+    const todolists = await TodoList.findAll({
+      include: [
+        {
+          model: TodoListItems,
+        }
+      ]
+    });
     res.json(todolists);
   } catch (error) {
     res.status(500).json({ message: "Error retrieving to-do lists", error });
